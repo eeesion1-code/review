@@ -36,6 +36,9 @@ h1 span, .ro p span { white-space: nowrap; }
 .go:active { transform: translateY(1px); }
 .go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 .note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
+.note.sub { margin-top: -18px; }
+.note a { color: var(--ash); text-underline-offset: 3px; }
+.note b { color: var(--washi); font-weight: 500; }
 .foot { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(239,230,211,.16); padding-top: 14px; }
 .foot small { font-size: 10.5px; letter-spacing: .2em; color: var(--ash); line-height: 1.6; }
 .foot .tk { font-family: var(--f-mincho); font-weight: 700; display: flex; align-items: baseline; gap: 6px; }
@@ -52,13 +55,15 @@ h1 span, .ro p span { white-space: nowrap; }
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
   <a class="go" id="go" href="#" rel="noopener">Google マップでクチコミを書く</a>
-  <p class="note">Google マップのアプリが開きます<br>（アプリがない場合はブラウザで開きます）</p>
+  <p class="note" id="note">Google マップのアプリが開きます</p>
+  <p class="note sub"><a id="web" href="#" rel="noopener">アプリがない場合：ブラウザで書く</a></p>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
 /* 店铺：s=店铺代码 → 店名＋Google 官方「クチコミを依頼」链接（加新店在这里加一行，同时在 APP 的店铺设置里加） */
 var STORES = {
-  omiya: { name: "権兵衛のいろり屋 大宮店", review: "https://g.page/r/CWrQLL72jFOREAE/review" }
+  omiya: { name: "権兵衛のいろり屋 大宮店", review: "https://g.page/r/CWrQLL72jFOREAE/review",
+           maps: "個室居酒屋 権兵衛のいろり屋 大宮店" }   // maps＝Google マップ App で検索する店名（App 内で店舗ページが開く）
 };
 /* 扫码记录：发给 APP（Apps Script），不等回应、不影响页面 */
 var LOG = "https://script.google.com/macros/s/AKfycbzsjsanQpjfDDHI3n2qdwbZwZneBUK6KTa3pA5SrNubG2pMtSqWYTQ-8BsHITGA8RqS/exec";
@@ -73,7 +78,25 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   }
   document.title = st.name + " | Google クチコミ";
   document.getElementById("shop").textContent = st.name;
-  document.getElementById("go").href = st.review;
+  /* 写评价要登录 Google。扫码软件自带的浏览器（LINE、Google App 等）没有登录，也不会把链接交给 App →
+     iPhone：内置浏览器里直接叫起 Google マップ App（comgooglemaps://，App 里已登录），1.8 秒没离开页面（没装 App）才去网页版；
+             Safari 里用官方评价链接（有 App 时 iOS 会交给 App 直接开评价框）。
+     Android：intent 指定 Google マップ App 打开官方评价链接，没装 App 自动用浏览器。 */
+  var ua = navigator.userAgent, iOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var android = /Android/.test(ua);
+  var inApp = /Line\/|FBAN|FBAV|Instagram|GSA\/|MicroMessenger|KAKAOTALK|Twitter|YJApp|PayPay/i.test(ua) || (iOS && !/Safari\//.test(ua));
+  var go = document.getElementById("go"), web = document.getElementById("web"), note = document.getElementById("note");
+  go.href = st.review; web.href = st.review;
+  if (iOS && inApp) {
+    go.href = "comgooglemaps://?q=" + encodeURIComponent(st.maps);
+    note.innerHTML = "Google マップのアプリでお店のページが開きます<br><b>「クチコミ」→「クチコミを書く」</b>をタップしてください";
+    go.addEventListener("click", function () {
+      setTimeout(function () { if (!document.hidden) location.href = st.review; }, 1800);
+    });
+  } else if (android) {
+    var path = st.review.replace(/^https:\/\//, "");
+    go.href = "intent://" + path + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
+  }
   var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
   if (t) {
     document.getElementById("en").textContent = "TABLE " + (n !== null ? String(n).padStart(2, "0") : t);
@@ -83,7 +106,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
     tk.appendChild(em); tk.appendChild(sp);
   }
   var url = LOG + "?log=1&s=" + encodeURIComponent(s) + "&t=" + encodeURIComponent(t) + "&_=" + Date.now();
-  try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }); }
+  try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }).catch(function () { new Image().src = url; }); }
   catch (e) { new Image().src = url; }
 })();
 </script>
