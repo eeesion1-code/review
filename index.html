@@ -36,8 +36,21 @@ h1 span, .ro p span { white-space: nowrap; }
 .go:active { transform: translateY(1px); }
 .go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 .note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
+#note { margin-top: -16px; }
+/* 第二条路：没装 Chrome 时用。点了大按钮 3 秒还在本页（没打开 Chrome）就亮起来 */
+.alt { display: grid; gap: 14px; border: 1px solid rgba(239,230,211,.14); border-radius: 6px; padding: 16px 14px 18px; transition: border-color .4s, background .4s; }
+.alt.hot { border-color: var(--hi); background: rgba(201,106,52,.10); }
+.alt .cap { text-align: center; font-size: 13px; color: var(--ash); letter-spacing: .06em; }
+.alt.hot .cap { color: var(--washi); font-weight: 600; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.go2 { display: block; text-align: center; text-decoration: none; color: var(--washi); border: 1px solid var(--kuri); border-radius: 4px;
+  font-family: var(--f-mincho); padding: 11px 6px 10px; background: rgba(123,86,54,.18); display: grid; gap: 2px; }
+.go2 b { font-weight: 700; font-size: 15px; letter-spacing: .03em; white-space: nowrap; }
+.go2 small { font-size: 12px; color: var(--ash); letter-spacing: .04em; white-space: nowrap; }
+.go2:active { transform: translateY(1px); }
+.go2:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 /* 两步图示：模仿 Google マップ App 里的「クチコミ」标签和「クチコミを書く」按钮 */
-.steps { display: grid; gap: 12px; margin-top: -6px; }
+.steps { display: grid; gap: 12px; padding-top: 4px; border-top: 1px dashed rgba(239,230,211,.12); }
 .steps .cap { text-align: center; font-size: 12.5px; color: var(--ash); letter-spacing: .06em; }
 .steps .row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .steps .st { display: grid; justify-items: center; gap: 7px; text-align: center; }
@@ -62,15 +75,23 @@ h1 span, .ro p span { white-space: nowrap; }
     <h1><span>本日はご来店</span><br><span>ありがとうございました</span></h1>
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
-  <a class="go" id="go" href="#" rel="noopener">Google マップで開く</a>
-  <div class="steps" aria-label="アプリが開いたら">
-    <p class="cap">アプリでお店のページが開いたら</p>
+  <a class="go" id="go" href="#" rel="noopener">Google でクチコミを書く</a>
+  <p class="note" id="note">Chrome でクチコミ投稿画面が開きます</p>
+  <section class="alt" id="alt">
+    <p class="cap" id="altcap">Chrome をお使いでない方は</p>
+    <div class="two">
+      <a class="go2" id="gapp" href="#" rel="noopener"><b>Google アプリ</b><small>で直接書く</small></a>
+      <a class="go2" id="gmap" href="#" rel="noopener"><b>Google マップ</b><small>でお店を開く</small></a>
+    </div>
+  <div class="steps" aria-label="Google マップで開いたら">
+    <p class="cap">Google マップでお店のページが開いたら</p>
     <div class="row">
       <div class="st"><span class="n">1</span><span class="chip">クチコミ</span><span class="t">タブをタップ</span></div>
       <span class="ar" aria-hidden="true">→</span>
       <div class="st"><span class="n">2</span><span class="chip pen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zm11.5-14.5 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>クチコミを書く</span><span class="t">をタップ</span></div>
     </div>
   </div>
+  </section>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
@@ -105,15 +126,38 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
      place_id 搜不到；带 !9m1!1b1 的「クチコミ」标签页链接只开空白地点；Chrome / Google App 也不行），Safari 里的 g.page / writereview 也只会进登录页
      → iPhone 一律叫起 App 打开店铺页面（comgooglemapsurl://maps.google.com/?cid=店铺编号，LINE 里实测能打开），
      再用两步图示告诉客人点「クチコミ」→「クチコミを書く」。 */
-  var go = document.getElementById("go");
-  go.href = st.map;
-  if (iOS) {   // 先叫起 Google マップ App，没装 App（1.8 秒还在本页）就开网页版地图
-    go.href = st.app;
-    go.addEventListener("click", function () {
-      setTimeout(function () { if (!document.hidden) location.href = st.map; }, 1800);
+  /* v6（用户 11/17 在 LINE 实测：用 Chrome〔googlechromes://〕和 Google App〔googleapp://open-url〕打开官方评价链接，
+     能直接进写评价画面，因为那两个 App 里已登录 Google）。网页查不到客人装了哪些 App →
+     大按钮先用 Chrome；点了 3 秒还在本页（没装 Chrome，或在 LINE 的提示里点了「許可しない」）就把下面「開かない場合」亮起来，
+     给 Google App（同样直接写）和 Google マップ App（店铺页＋两步图示，几乎人人都有）两条路。不自动连跳，免得 LINE 连续弹提示。
+     Android：Chrome 打开评价链接（intent，没装就用浏览器）。 */
+  var go = document.getElementById("go"), gapp = document.getElementById("gapp"), gmap = document.getElementById("gmap");
+  var alt = document.getElementById("alt"), note = document.getElementById("note"), bare = st.review.replace(/^https:\/\//, "");
+  go.href = st.review; gapp.href = st.review; gmap.href = st.map;
+  if (iOS) {
+    go.href = "googlechromes://" + bare;
+    gapp.href = "googleapp://open-url?url=" + encodeURIComponent(st.review);
+    gmap.href = st.app;
+    var hot = function () {
+      setTimeout(function () {
+        if (document.hidden) return;   // 已经打开 App 了
+        alt.classList.add("hot");
+        document.getElementById("altcap").textContent = "開かない場合は、こちらからどうぞ";
+        alt.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 3000);
+    };
+    go.addEventListener("click", hot);
+    gapp.addEventListener("click", hot);
+    gmap.addEventListener("click", function () {   // 没装 Google マップ App 就开网页版地图
+      setTimeout(function () { if (!document.hidden) location.href = st.map; }, 3000);
     });
   } else if (android) {
-    go.href = "intent://" + st.map.replace(/^https:\/\//, "") + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.map) + ";end";
+    go.href = "intent://" + bare + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
+    gapp.href = "intent://" + bare + "#Intent;scheme=https;package=com.google.android.googlequicksearchbox;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
+    gmap.href = "intent://" + st.map.replace(/^https:\/\//, "") + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.map) + ";end";
+    note.textContent = "Chrome でクチコミ投稿画面が開きます";
+  } else {
+    note.textContent = "クチコミ投稿画面が開きます";
   }
   var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
   if (t) {
