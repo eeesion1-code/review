@@ -134,7 +134,17 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   var go = document.getElementById("go"), gapp = document.getElementById("gapp"), gmap = document.getElementById("gmap");
   var alt = document.getElementById("alt"), note = document.getElementById("note"), bare = st.review.replace(/^https:\/\//, "");
   go.href = st.review; gapp.href = st.review; gmap.href = st.map;
-  if (iOS) {
+  /* v7：已经在 Chrome / Google App 里打开的（那两个 App 里已登录 Google），直接在原地打开评价链接 */
+  var env = /Line\//.test(ua) ? "line" : /GSA\//.test(ua) ? "googleapp" : /CriOS/.test(ua) ? "chrome"
+    : /FxiOS|EdgiOS|OPiOS|YJApp|PayPay|Instagram|FBAN|FBAV|MicroMessenger/i.test(ua) ? "other"
+    : android ? (/; wv\)/.test(ua) ? "android-app" : "android") : iOS ? (/Safari\//.test(ua) ? "safari" : "inapp") : "pc";
+  window.__env = env;
+  if (iOS && (env === "chrome" || env === "googleapp")) {
+    go.href = st.review;
+    note.textContent = "クチコミ投稿画面が開きます";
+    gapp.href = env === "googleapp" ? st.review : "googleapp://open-url?url=" + encodeURIComponent(st.review);
+    gmap.href = st.app;
+  } else if (iOS) {
     go.href = "googlechromes://" + bare;
     gapp.href = "googleapp://open-url?url=" + encodeURIComponent(st.review);
     gmap.href = st.app;
@@ -167,7 +177,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
     var sp = document.createElement("span"); sp.textContent = "番卓";
     tk.appendChild(em); tk.appendChild(sp);
   }
-  var url = LOG + "?log=1&s=" + encodeURIComponent(s) + "&t=" + encodeURIComponent(t) + "&_=" + Date.now();
+  var url = LOG + "?log=1&s=" + encodeURIComponent(s) + "&t=" + encodeURIComponent(t) + "&ua=" + encodeURIComponent(window.__env || "") + "&_=" + Date.now();
   try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }).catch(function () { new Image().src = url; }); }
   catch (e) { new Image().src = url; }
 })();
