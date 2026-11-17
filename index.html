@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Google クチコミ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap">
+<style>
+/* 版式：一屏竖排 —— 店名 / 炉縁框里的感谢语 / 写评价按钮 / 桌号。和桌上的 QR 卡同一套「いろり」配色（只做一种深色样式） */
+:root {
+  --sumi: #1c1814; --washi: #efe6d3; --ash: #a89d8c; --kuri: #7b5636; --kuri-d: #4f3622; --hi: #c96a34;
+  --f-mincho: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --f-gothic: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { min-height: 100%; background: var(--sumi); color: var(--washi); }
+body { font-family: var(--f-gothic); -webkit-text-size-adjust: 100%;
+  padding: max(28px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+  background: radial-gradient(120% 60% at 50% 38%, rgba(201,106,52,.16), rgba(201,106,52,0) 60%), var(--sumi); }
+main { max-width: 420px; margin: 0 auto; display: grid; gap: 28px; }
+.head { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .16em; color: var(--ash); }
+.head i { width: 7px; height: 7px; border-radius: 50%; background: var(--hi); flex: none; }
+.head b { font-weight: 400; white-space: nowrap; }
+.head span { flex: 1; height: 1px; background: linear-gradient(90deg, var(--kuri), transparent); }
+.ro { background: var(--kuri); padding: 10px; box-shadow: inset 0 0 0 1px var(--kuri-d), inset 0 0 0 4px var(--kuri), inset 0 0 0 5px var(--kuri-d); }
+.ro div { background: rgba(28,24,20,.92); padding: 30px 18px 26px; text-align: center; display: grid; gap: 14px; }
+h1 { font-family: var(--f-mincho); font-weight: 700; font-size: clamp(19px, 6.2vw, 25px); line-height: 1.6; letter-spacing: .05em; }
+h1 span, .ro p span { white-space: nowrap; }
+.ro p { font-family: var(--f-mincho); font-size: clamp(14px, 4.2vw, 16px); line-height: 1.9; letter-spacing: .06em; color: var(--washi); }
+.go { display: block; text-align: center; text-decoration: none; background: var(--washi); color: var(--sumi);
+  font-family: var(--f-mincho); font-weight: 700; font-size: 19px; letter-spacing: .08em; padding: 19px 12px; border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--kuri), 0 10px 30px rgba(0,0,0,.35); }
+.go:active { transform: translateY(1px); }
+.go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
+.note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
+.foot { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(239,230,211,.16); padding-top: 14px; }
+.foot small { font-size: 10.5px; letter-spacing: .2em; color: var(--ash); line-height: 1.6; }
+.foot .tk { font-family: var(--f-mincho); font-weight: 700; display: flex; align-items: baseline; gap: 6px; }
+.foot .tk em { font-style: normal; font-size: 30px; }
+.foot .tk span { font-size: 14px; color: var(--ash); }
+.bad { text-align: center; font-family: var(--f-mincho); font-size: 17px; line-height: 1.9; padding-top: 30vh; }
+</style>
+</head>
+<body>
+<main id="app">
+  <div class="head"><i></i><b id="shop">&nbsp;</b><span></span></div>
+  <div class="ro"><div>
+    <h1><span>本日はご来店</span><br><span>ありがとうございました</span></h1>
+    <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
+  </div></div>
+  <a class="go" id="go" href="#" rel="noopener">Google マップでクチコミを書く</a>
+  <p class="note">Google マップのアプリが開きます<br>（アプリがない場合はブラウザで開きます）</p>
+  <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
+</main>
+<script>
+/* 店铺：s=店铺代码 → 店名＋Google 官方「クチコミを依頼」链接（加新店在这里加一行，同时在 APP 的店铺设置里加） */
+var STORES = {
+  omiya: { name: "権兵衛のいろり屋 大宮店", review: "https://g.page/r/CWrQLL72jFOREAE/review" }
+};
+/* 扫码记录：发给 APP（Apps Script），不等回应、不影响页面 */
+var LOG = "https://script.google.com/macros/s/AKfycbzsjsanQpjfDDHI3n2qdwbZwZneBUK6KTa3pA5SrNubG2pMtSqWYTQ-8BsHITGA8RqS/exec";
+var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"];
+
+(function () {
+  var q = new URLSearchParams(location.search), s = (q.get("s") || "").trim(), t = (q.get("t") || "").trim().slice(0, 20);
+  var st = STORES[s];
+  if (!st) {
+    document.getElementById("app").innerHTML = '<p class="bad">QR コードを読み取れませんでした。<br>恐れ入りますが、スタッフにお声がけください。</p>';
+    return;
+  }
+  document.title = st.name + " | Google クチコミ";
+  document.getElementById("shop").textContent = st.name;
+  document.getElementById("go").href = st.review;
+  var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
+  if (t) {
+    document.getElementById("en").textContent = "TABLE " + (n !== null ? String(n).padStart(2, "0") : t);
+    var tk = document.getElementById("tk");
+    var em = document.createElement("em"); em.textContent = n !== null && KANJI[n] ? KANJI[n] : t;
+    var sp = document.createElement("span"); sp.textContent = "番卓";
+    tk.appendChild(em); tk.appendChild(sp);
+  }
+  var url = LOG + "?log=1&s=" + encodeURIComponent(s) + "&t=" + encodeURIComponent(t) + "&_=" + Date.now();
+  try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }); }
+  catch (e) { new Image().src = url; }
+})();
+</script>
+</body>
+</html>
