@@ -36,9 +36,17 @@ h1 span, .ro p span { white-space: nowrap; }
 .go:active { transform: translateY(1px); }
 .go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 .note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
-.note.sub { margin-top: -18px; }
-.note a { color: var(--ash); text-underline-offset: 3px; }
-.note b { color: var(--washi); font-weight: 500; }
+/* 两步图示：模仿 Google マップ App 里的「クチコミ」标签和「クチコミを書く」按钮 */
+.steps { display: grid; gap: 12px; margin-top: -6px; }
+.steps .cap { text-align: center; font-size: 12.5px; color: var(--ash); letter-spacing: .06em; }
+.steps .row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.steps .st { display: grid; justify-items: center; gap: 7px; text-align: center; }
+.steps .n { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--kuri); color: var(--washi); font-size: 11px; display: grid; place-items: center; }
+.steps .chip { display: inline-flex; align-items: center; gap: 5px; background: #fff; color: #1a1a1a; font-family: -apple-system, "Hiragino Sans", sans-serif;
+  font-size: 13.5px; font-weight: 600; padding: 7px 13px; border-radius: 99px; white-space: nowrap; border-bottom: 2px solid #1a73e8; }
+.steps .chip.pen { border: 1px solid #c7d7f2; background: #e8f0fe; color: #0b57d0; }
+.steps .t { font-size: 12px; color: var(--ash); }
+.steps .ar { color: var(--kuri); font-size: 18px; }
 .foot { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(239,230,211,.16); padding-top: 14px; }
 .foot small { font-size: 10.5px; letter-spacing: .2em; color: var(--ash); line-height: 1.6; }
 .foot .tk { font-family: var(--f-mincho); font-weight: 700; display: flex; align-items: baseline; gap: 6px; }
@@ -55,8 +63,14 @@ h1 span, .ro p span { white-space: nowrap; }
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
   <a class="go" id="go" href="#" rel="noopener">Google マップで開く</a>
-  <p class="note" id="note">Google マップでお店のページが開きます</p>
-  <p class="note sub"><a id="web" href="#" rel="noopener">クチコミ投稿画面を直接開く</a></p>
+  <div class="steps" aria-label="アプリが開いたら">
+    <p class="cap">アプリでお店のページが開いたら</p>
+    <div class="row">
+      <div class="st"><span class="n">1</span><span class="chip">クチコミ</span><span class="t">タブをタップ</span></div>
+      <span class="ar" aria-hidden="true">→</span>
+      <div class="st"><span class="n">2</span><span class="chip pen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zm11.5-14.5 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>クチコミを書く</span><span class="t">をタップ</span></div>
+    </div>
+  </div>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
@@ -85,13 +99,14 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
      Android：intent 指定 Google マップ App 打开官方评价链接，没装 App 自动用浏览器。 */
   var ua = navigator.userAgent, iOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
   var android = /Android/.test(ua);
-  var inApp = /Line\/|FBAN|FBAV|Instagram|GSA\/|MicroMessenger|KAKAOTALK|Twitter|YJApp|PayPay/i.test(ua) || (iOS && !/Safari\//.test(ua));
   /* v3（用户 11/17：跳到登录页不行，跳到地图更好）→ 按钮一律去 Google マップ上的店铺页面（看页面不用登录；
      有 App 就用 App 开，App 里已登录可以直接写）。登录只在客人自己点「クチコミを書く」时才可能出现。 */
-  var go = document.getElementById("go"), web = document.getElementById("web"), note = document.getElementById("note");
-  go.href = st.map; web.href = st.review;
-  note.innerHTML = "Google マップでお店のページが開きます<br><b>「クチコミ」→「クチコミを書く」</b>をタップしてください";
-  if (iOS && inApp) {   // 扫码软件的内置浏览器：先叫起 Google マップ App，没装 App（1.8 秒还在本页）就开网页版地图
+  /* v4（11/17 在用户 iPhone 上实测）：App 不接受「直接打开写评价画面」的跳转（comgooglemapsurl:// 的 g.page / writereview 都没反应，
+     place_id 搜不到），Safari 里的 g.page / writereview 也只会进登录页 → iPhone 一律叫起 App 打开店铺页面（comgooglemaps://?q=店名，实测能直接打开），
+     再用两步图示告诉客人点「クチコミ」→「クチコミを書く」。 */
+  var go = document.getElementById("go");
+  go.href = st.map;
+  if (iOS) {   // 先叫起 Google マップ App，没装 App（1.8 秒还在本页）就开网页版地图
     go.href = "comgooglemaps://?q=" + encodeURIComponent(st.maps);
     go.addEventListener("click", function () {
       setTimeout(function () { if (!document.hidden) location.href = st.map; }, 1800);
