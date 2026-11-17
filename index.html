@@ -78,7 +78,7 @@ h1 span, .ro p span { white-space: nowrap; }
 var STORES = {
   omiya: { name: "権兵衛のいろり屋 大宮店", review: "https://g.page/r/CWrQLL72jFOREAE/review",
            map: "https://www.google.com/maps?cid=10471868549946986602",   // Google マップ上の店舗ページ（見るだけならログイン不要）
-           maps: "個室居酒屋 権兵衛のいろり屋 大宮店" }   // maps＝Google マップ App で検索する店名（App 内で店舗ページが開く）
+           app: "comgooglemapsurl://maps.google.com/?cid=10471868549946986602" }   // app＝Google マップ App で店舗ページを開く（店舗番号で開くので別の店にならない。11/17 LINE で実測 OK）
 };
 /* 扫码记录：发给 APP（Apps Script），不等回应、不影响页面 */
 var LOG = "https://script.google.com/macros/s/AKfycbzsjsanQpjfDDHI3n2qdwbZwZneBUK6KTa3pA5SrNubG2pMtSqWYTQ-8BsHITGA8RqS/exec";
@@ -102,12 +102,13 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   /* v3（用户 11/17：跳到登录页不行，跳到地图更好）→ 按钮一律去 Google マップ上的店铺页面（看页面不用登录；
      有 App 就用 App 开，App 里已登录可以直接写）。登录只在客人自己点「クチコミを書く」时才可能出现。 */
   /* v4（11/17 在用户 iPhone 上实测）：App 不接受「直接打开写评价画面」的跳转（comgooglemapsurl:// 的 g.page / writereview 都没反应，
-     place_id 搜不到），Safari 里的 g.page / writereview 也只会进登录页 → iPhone 一律叫起 App 打开店铺页面（comgooglemaps://?q=店名，实测能直接打开），
+     place_id 搜不到；带 !9m1!1b1 的「クチコミ」标签页链接只开空白地点；Chrome / Google App 也不行），Safari 里的 g.page / writereview 也只会进登录页
+     → iPhone 一律叫起 App 打开店铺页面（comgooglemapsurl://maps.google.com/?cid=店铺编号，LINE 里实测能打开），
      再用两步图示告诉客人点「クチコミ」→「クチコミを書く」。 */
   var go = document.getElementById("go");
   go.href = st.map;
   if (iOS) {   // 先叫起 Google マップ App，没装 App（1.8 秒还在本页）就开网页版地图
-    go.href = "comgooglemaps://?q=" + encodeURIComponent(st.maps);
+    go.href = st.app;
     go.addEventListener("click", function () {
       setTimeout(function () { if (!document.hidden) location.href = st.map; }, 1800);
     });
