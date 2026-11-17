@@ -54,15 +54,16 @@ h1 span, .ro p span { white-space: nowrap; }
     <h1><span>本日はご来店</span><br><span>ありがとうございました</span></h1>
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
-  <a class="go" id="go" href="#" rel="noopener">Google マップでクチコミを書く</a>
-  <p class="note" id="note">Google マップのアプリが開きます</p>
-  <p class="note sub"><a id="web" href="#" rel="noopener">アプリがない場合：ブラウザで書く</a></p>
+  <a class="go" id="go" href="#" rel="noopener">Google マップで開く</a>
+  <p class="note" id="note">Google マップでお店のページが開きます</p>
+  <p class="note sub"><a id="web" href="#" rel="noopener">クチコミ投稿画面を直接開く</a></p>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
 /* 店铺：s=店铺代码 → 店名＋Google 官方「クチコミを依頼」链接（加新店在这里加一行，同时在 APP 的店铺设置里加） */
 var STORES = {
   omiya: { name: "権兵衛のいろり屋 大宮店", review: "https://g.page/r/CWrQLL72jFOREAE/review",
+           map: "https://www.google.com/maps?cid=10471868549946986602",   // Google マップ上の店舗ページ（見るだけならログイン不要）
            maps: "個室居酒屋 権兵衛のいろり屋 大宮店" }   // maps＝Google マップ App で検索する店名（App 内で店舗ページが開く）
 };
 /* 扫码记录：发给 APP（Apps Script），不等回应、不影响页面 */
@@ -85,17 +86,18 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   var ua = navigator.userAgent, iOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
   var android = /Android/.test(ua);
   var inApp = /Line\/|FBAN|FBAV|Instagram|GSA\/|MicroMessenger|KAKAOTALK|Twitter|YJApp|PayPay/i.test(ua) || (iOS && !/Safari\//.test(ua));
+  /* v3（用户 11/17：跳到登录页不行，跳到地图更好）→ 按钮一律去 Google マップ上的店铺页面（看页面不用登录；
+     有 App 就用 App 开，App 里已登录可以直接写）。登录只在客人自己点「クチコミを書く」时才可能出现。 */
   var go = document.getElementById("go"), web = document.getElementById("web"), note = document.getElementById("note");
-  go.href = st.review; web.href = st.review;
-  if (iOS && inApp) {
+  go.href = st.map; web.href = st.review;
+  note.innerHTML = "Google マップでお店のページが開きます<br><b>「クチコミ」→「クチコミを書く」</b>をタップしてください";
+  if (iOS && inApp) {   // 扫码软件的内置浏览器：先叫起 Google マップ App，没装 App（1.8 秒还在本页）就开网页版地图
     go.href = "comgooglemaps://?q=" + encodeURIComponent(st.maps);
-    note.innerHTML = "Google マップのアプリでお店のページが開きます<br><b>「クチコミ」→「クチコミを書く」</b>をタップしてください";
     go.addEventListener("click", function () {
-      setTimeout(function () { if (!document.hidden) location.href = st.review; }, 1800);
+      setTimeout(function () { if (!document.hidden) location.href = st.map; }, 1800);
     });
   } else if (android) {
-    var path = st.review.replace(/^https:\/\//, "");
-    go.href = "intent://" + path + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
+    go.href = "intent://" + st.map.replace(/^https:\/\//, "") + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.map) + ";end";
   }
   var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
   if (t) {
