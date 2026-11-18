@@ -37,6 +37,8 @@ h1 span, .ro p span { white-space: nowrap; }
 .go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 .note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
 #note { margin-top: -16px; }
+.note.hint { margin-top: -22px; font-size: 11.5px; line-height: 1.7; opacity: .85; }
+.note b { color: var(--washi); font-weight: 600; }
 /* 第二条路：没装 Chrome 时用。点了大按钮 3 秒还在本页（没打开 Chrome）就亮起来 */
 .alt { display: grid; gap: 14px; border: 1px solid rgba(239,230,211,.14); border-radius: 6px; padding: 16px 14px 18px; transition: border-color .4s, background .4s; }
 .alt.hot { border-color: var(--hi); background: rgba(201,106,52,.10); }
@@ -76,22 +78,8 @@ h1 span, .ro p span { white-space: nowrap; }
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
   <a class="go" id="go" href="#" rel="noopener">Google でクチコミを書く</a>
-  <p class="note" id="note">Chrome でクチコミ投稿画面が開きます</p>
-  <section class="alt" id="alt">
-    <p class="cap" id="altcap">Chrome をお使いでない方は</p>
-    <div class="two">
-      <a class="go2" id="gapp" href="#" rel="noopener"><b>Google アプリ</b><small>で直接書く</small></a>
-      <a class="go2" id="gmap" href="#" rel="noopener"><b>Google マップ</b><small>でお店を開く</small></a>
-    </div>
-  <div class="steps" aria-label="Google マップで開いたら">
-    <p class="cap">Google マップでお店のページが開いたら</p>
-    <div class="row">
-      <div class="st"><span class="n">1</span><span class="chip">クチコミ</span><span class="t">タブをタップ</span></div>
-      <span class="ar" aria-hidden="true">→</span>
-      <div class="st"><span class="n">2</span><span class="chip pen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zm11.5-14.5 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>クチコミを書く</span><span class="t">をタップ</span></div>
-    </div>
-  </div>
-  </section>
+  <p class="note" id="note">クチコミ投稿画面が開きます</p>
+  <p class="note hint" id="hint">「外部アプリケーションを開こうとしています」と出たら<br><b>「許可する」</b>をタップしてください</p>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
@@ -131,44 +119,40 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
      大按钮先用 Chrome；点了 3 秒还在本页（没装 Chrome，或在 LINE 的提示里点了「許可しない」）就把下面「開かない場合」亮起来，
      给 Google App（同样直接写）和 Google マップ App（店铺页＋两步图示，几乎人人都有）两条路。不自动连跳，免得 LINE 连续弹提示。
      Android：Chrome 打开评价链接（intent，没装就用浏览器）。 */
-  var go = document.getElementById("go"), gapp = document.getElementById("gapp"), gmap = document.getElementById("gmap");
-  var alt = document.getElementById("alt"), note = document.getElementById("note"), bare = st.review.replace(/^https:\/\//, "");
-  go.href = st.review; gapp.href = st.review; gmap.href = st.map;
+  /* v8（用户 11/18：按钮太多，合成一个；地图先不管）：一个按钮，依次自动试
+     ① Chrome（googlechromes://）→ ② Google App（googleapp://open-url）→ ③ 本浏览器打开评价链接（没登录 Google 的会出登录页，绕不过）。
+     每步等 3.5 秒（给客人在 LINE 的「外部アプリ」提示里点「許可する」的时间）；页面一离开（App 打开了）就停，回来也不再接着跳。 */
+  var go = document.getElementById("go"), note = document.getElementById("note"), hint = document.getElementById("hint");
+  var bare = st.review.replace(/^https:\/\//, "");
+  go.href = st.review;
   /* v7：已经在 Chrome / Google App 里打开的（那两个 App 里已登录 Google），直接在原地打开评价链接 */
   var env = /Line\//.test(ua) ? "line" : /GSA\//.test(ua) ? "googleapp" : /CriOS/.test(ua) ? "chrome"
     : /FxiOS|EdgiOS|OPiOS|YJApp|PayPay|Instagram|FBAN|FBAV|MicroMessenger/i.test(ua) ? "other"
     : android ? (/; wv\)/.test(ua) ? "android-app" : "android") : iOS ? (/Safari\//.test(ua) ? "safari" : "inapp") : "pc";
   window.__env = env;
-  if (iOS && (env === "chrome" || env === "googleapp")) {
-    go.href = st.review;
-    note.textContent = "クチコミ投稿画面が開きます";
-    gapp.href = env === "googleapp" ? st.review : "googleapp://open-url?url=" + encodeURIComponent(st.review);
-    gmap.href = st.app;
-  } else if (iOS) {
-    go.href = "googlechromes://" + bare;
-    gapp.href = "googleapp://open-url?url=" + encodeURIComponent(st.review);
-    gmap.href = st.app;
-    var hot = function () {
-      setTimeout(function () {
-        if (document.hidden) return;   // 已经打开 App 了
-        alt.classList.add("hot");
-        document.getElementById("altcap").textContent = "開かない場合は、こちらからどうぞ";
-        alt.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 3000);
-    };
-    go.addEventListener("click", hot);
-    gapp.addEventListener("click", hot);
-    gmap.addEventListener("click", function () {   // 没装 Google マップ App 就开网页版地图
-      setTimeout(function () { if (!document.hidden) location.href = st.map; }, 3000);
-    });
-  } else if (android) {
-    go.href = "intent://" + bare + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
-    gapp.href = "intent://" + bare + "#Intent;scheme=https;package=com.google.android.googlequicksearchbox;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end";
-    gmap.href = "intent://" + st.map.replace(/^https:\/\//, "") + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.map) + ";end";
-    note.textContent = "Chrome でクチコミ投稿画面が開きます";
-  } else {
-    note.textContent = "クチコミ投稿画面が開きます";
+  var steps = [st.review];   // 已在 Chrome / Google App 里（已登录）、电脑：原地打开
+  if (iOS && env !== "chrome" && env !== "googleapp") {
+    steps = ["googlechromes://" + bare, "googleapp://open-url?url=" + encodeURIComponent(st.review), st.review];
+  } else if (android) {   // Android：intent 指定 Chrome（Android 的 Chrome 一般已登录），没装就用浏览器
+    steps = ["intent://" + bare + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end"];
   }
+  if (!(iOS && steps.length > 1)) hint.hidden = true;   // 只有要叫起别的 App 时才需要「許可する」提示
+  go.href = steps[0];
+  var left = false;
+  var mark = function () { if (document.hidden) left = true; };
+  document.addEventListener("visibilitychange", mark);
+  window.addEventListener("pagehide", function () { left = true; });
+  go.addEventListener("click", function (e) {
+    if (steps.length < 2) return;   // 只有一步：照常打开链接
+    e.preventDefault();
+    left = false;
+    var i = 0;
+    (function next() {
+      if (left || i >= steps.length) return;   // App 已经打开（页面离开过）就停
+      location.href = steps[i++];
+      if (i < steps.length) setTimeout(next, 3500);
+    })();
+  });
   var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
   if (t) {
     document.getElementById("en").textContent = "TABLE " + (n !== null ? String(n).padStart(2, "0") : t);
