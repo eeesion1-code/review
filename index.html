@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Google クチコミ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&family=Yuji+Syuku&display=swap">
 <style>
 /* 版式：一屏竖排 —— 店名 / 炉縁框里的感谢语 / 写评价按钮 / 桌号。和桌上的 QR 卡同一套「いろり」配色（只做一种深色样式） */
 :root {
@@ -78,6 +78,72 @@ h1 span, .ro p span { white-space: nowrap; }
 .foot .tk { font-family: var(--f-mincho); font-weight: 700; display: flex; align-items: baseline; gap: 6px; }
 .foot .tk em { font-style: normal; font-size: 30px; }
 .foot .tk span { font-size: 14px; color: var(--ash); }
+body { min-height: 100vh; }
+html:has(body.t2) { background: #f2ece0; } html:has(body.t3) { background: #f6f3ec; }
+html:has(body.t4) { background: #4a2e1b; } html:has(body.t5) { background: #f7f6f2; }
+.foot { justify-content: center; align-items: center; min-height: 64px; }
+.foot .stamp { display: none; }
+
+/* ===== 5 种风格（11/18，和 QR 卡同名同配色）：body.t1〜t5 ===== */
+/* 2 和紙・墨 */
+body.t2 { color-scheme: light; color: #211c17; background:
+  radial-gradient(ellipse 70% 40% at 20% 10%, rgba(140,110,70,.08), transparent 70%),
+  radial-gradient(ellipse 60% 40% at 85% 90%, rgba(140,110,70,.09), transparent 70%),
+  repeating-linear-gradient(115deg, rgba(120,95,60,0) 0 6px, rgba(120,95,60,.035) 6px 7px), #f2ece0; }
+.t2 .head b { color: #211c17; font-family: var(--f-mincho); letter-spacing: .22em; } .t2 .head i { background: #b8392a; border-radius: 1px; }
+.t2 .head span { background: linear-gradient(90deg, rgba(33,28,23,.5), transparent); }
+.t2 .ro { background: transparent; padding: 8px; box-shadow: inset 0 0 0 2px #211c17, inset 0 0 0 6px #f2ece0, inset 0 0 0 7px #211c17; }
+.t2 .ro div { background: transparent; }
+.t2 h1 { font-family: "Yuji Syuku", var(--f-mincho); font-weight: 400; color: #211c17; }
+.t2 .ro p, .t2 .pick .ask { color: #211c17; }
+.t2 .go { background: #211c17; color: #f2ece0; box-shadow: none; } .t2 .pick .go small { color: #cfc4b2; }
+.t2 .pick .sub { color: #7a6f62; } .t2 .pick .sub b { color: #211c17; }
+.t2 .foot { border-top-color: rgba(33,28,23,.2); justify-content: space-between; }
+.t2 .foot .stamp { display: grid; place-items: center; width: 48px; height: 48px; background: #b8392a; color: #f7efe2; border-radius: 4px;
+  font-family: var(--f-mincho); font-weight: 700; font-size: 12px; writing-mode: vertical-rl; transform: rotate(-5deg);
+  box-shadow: inset 0 0 0 2px #f2ece0, inset 0 0 0 3px #b8392a; }
+.t2 .foot .tk em { color: #211c17; font-family: "Yuji Syuku", var(--f-mincho); font-weight: 400; } .t2 .foot .tk span { color: #7a6f62; }
+
+/* 3 暖簾 */
+body.t3 { color-scheme: light; background: #f6f3ec; color: #1f3352; padding-top: 0; }
+.t3 .head { margin: 0 -22px; padding: calc(max(28px, env(safe-area-inset-top)) + 10px) 22px 50px; background: #1f3352; justify-content: center; position: relative; }
+.t3 .head::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+  background: linear-gradient(90deg, transparent calc(33.33% - 2px), #f6f3ec calc(33.33% - 2px) calc(33.33% + 2px), transparent calc(33.33% + 2px) calc(66.66% - 2px), #f6f3ec calc(66.66% - 2px) calc(66.66% + 2px), transparent calc(66.66% + 2px)); }
+.t3 .head i, .t3 .head span { display: none; }
+.t3 .head b { color: #f6f3ec; font-family: var(--f-mincho); font-weight: 700; font-size: 18px; letter-spacing: .2em; }
+.t3 .ro { background: transparent; padding: 0; box-shadow: inset 0 0 0 1px #1f3352; } .t3 .ro div { background: #fff; margin: 1px; }
+.t3 h1, .t3 .ro p, .t3 .pick .ask { color: #1f3352; }
+.t3 .go { background: #1f3352; color: #f6f3ec; box-shadow: none; } .t3 .pick .go small { color: #b9c3d3; }
+.t3 .pick .sub { color: #6c7a8f; } .t3 .pick .sub b { color: #1f3352; }
+.t3 .foot { border-top-color: rgba(31,51,82,.18); }
+.t3 .foot .tk { align-items: center; } .t3 .foot .tk em { color: #1f3352; font-size: 22px; min-width: 48px; height: 48px; padding: 0 8px; border: 2px solid #1f3352; border-radius: 99px; display: grid; place-items: center; }
+.t3 .foot .tk span { color: #6c7a8f; }
+
+/* 4 炉端・木目 */
+body.t4 { color: #f1e7d2; background:
+  radial-gradient(ellipse 90% 45% at 50% 30%, rgba(255,220,160,.10), transparent 70%),
+  repeating-linear-gradient(91deg, #4f321e 0 10px, #472c1a 10px 16px, #55361f 16px 28px, #4a2e1b 28px 32px); }
+.t4 main { outline: 1px solid rgba(201,164,92,.6); outline-offset: 10px; }
+.t4 .head i { background: #c9a45c; } .t4 .head b { color: #e6d3ad; } .t4 .head span { background: linear-gradient(90deg, #c9a45c, transparent); }
+.t4 .ro { background: #c9a45c; padding: 2px; box-shadow: 0 8px 22px rgba(0,0,0,.4); } .t4 .ro div { background: rgba(42,26,15,.9); }
+.t4 .go { background: #f1e7d2; color: #2a1a0f; box-shadow: 0 0 0 2px #c9a45c, 0 8px 20px rgba(0,0,0,.35); } .t4 .pick .go small { color: #6b4a2b; }
+.t4 .pick .sub { color: #d9c6a3; }
+.t4 .foot { border-top-color: rgba(201,164,92,.35); }
+.t4 .foot .tk { background: #f1e7d2; padding: 6px 20px 7px; border-radius: 3px; box-shadow: 0 0 0 2px #c9a45c; }
+.t4 .foot .tk em { color: #2a1a0f; font-size: 24px; } .t4 .foot .tk span { color: #6b4a2b; }
+
+/* 5 余白・モダン */
+body.t5 { color-scheme: light; background: #f7f6f2; color: #1d1d1b; }
+body.t5::before { content: "囲"; position: fixed; right: -40px; bottom: 30px; font-family: var(--f-mincho); font-size: 260px; line-height: 1; color: rgba(29,29,27,.035); pointer-events: none; }
+.t5 .head i { background: #c96a34; border-radius: 0; width: 6px; height: 6px; } .t5 .head b { color: #1d1d1b; letter-spacing: .3em; font-size: 12px; }
+.t5 .head span { background: rgba(29,29,27,.18); }
+.t5 .ro { background: none; box-shadow: none; padding: 0; } .t5 .ro div { background: none; padding: 26px 0 8px; }
+.t5 h1 { font-weight: 500; color: #1d1d1b; } .t5 .ro p, .t5 .pick .ask { color: #1d1d1b; }
+.t5 .go { background: #1d1d1b; color: #f7f6f2; border-radius: 0; box-shadow: none; } .t5 .pick .go small { color: #b9b6ae; }
+.t5 .pick .sub { color: #8a8780; } .t5 .pick .sub b { color: #1d1d1b; }
+.t5 .foot { border-top-color: rgba(29,29,27,.15); justify-content: flex-end; }
+.t5 .foot .tk em { color: #1d1d1b; font-weight: 500; } .t5 .foot .tk span { color: #8a8780; }
+
 .bad { text-align: center; font-family: var(--f-mincho); font-size: 17px; line-height: 1.9; padding-top: 30vh; }
 </style>
 </head>
@@ -100,9 +166,8 @@ h1 span, .ro p span { white-space: nowrap; }
         <p class="sub">開いたら <b>「クチコミ」</b>→<br><b>「クチコミを書く」</b>をタップ</p>
       </div>
     </div>
-    <p class="note hint" id="hint">「外部アプリケーションを開こうとしています」と出たら <b class="nw">「許可する」</b> をタップ</p>
   </section>
-  <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
+  <div class="foot"><span class="stamp">いろり屋</span><div class="tk" id="tk"></div></div>
 </main>
 <script>
 /* 店铺：s=店铺代码 → 店名＋Google 官方「クチコミを依頼」链接（加新店在这里加一行，同时在 APP 的店铺设置里加） */
@@ -117,6 +182,9 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
 
 (function () {
   var q = new URLSearchParams(location.search), s = (q.get("s") || "").trim(), t = (q.get("t") || "").trim().slice(0, 20);
+  /* 风格：THEME＝正式用的版本；网址加 &theme=1〜5 只是预览（预览不记扫码） */
+  var THEME = 1, qt = q.get("theme"), preview = /^[1-5]$/.test(qt || "");
+  document.body.classList.add("t" + (preview ? qt : THEME));
   var st = STORES[s];
   if (!st) {
     document.getElementById("app").innerHTML = '<p class="bad">QR コードを読み取れませんでした。<br>恐れ入りますが、スタッフにお声がけください。</p>';
@@ -144,7 +212,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   /* v8（用户 11/18：按钮太多，合成一个；地图先不管）：一个按钮，依次自动试
      ① Chrome（googlechromes://）→ ② Google App（googleapp://open-url）→ ③ 本浏览器打开评价链接（没登录 Google 的会出登录页，绕不过）。
      每步等 3.5 秒（给客人在 LINE 的「外部アプリ」提示里点「許可する」的时间）；页面一离开（App 打开了）就停，回来也不再接着跳。 */
-  var go = document.getElementById("go"), gmap = document.getElementById("gmap"), hint = document.getElementById("hint");
+  var go = document.getElementById("go"), gmap = document.getElementById("gmap");
   var bare = st.review.replace(/^https:\/\//, "");
   go.href = st.review;
   /* v7：已经在 Chrome / Google App 里打开的（那两个 App 里已登录 Google），直接在原地打开评价链接 */
@@ -166,7 +234,6 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   if (iOS) gmap.addEventListener("click", function () {
     setTimeout(function () { if (!document.hidden && !left) location.href = st.map; }, 3500);
   });
-  if (!iOS) hint.hidden = true;   // 「許可する」提示只在 iPhone 的 LINE 等里会出现
   go.href = steps[0];
   var left = false;
   var mark = function () { if (document.hidden) left = true; };
@@ -185,15 +252,16 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   });
   var n = /^\d+$/.test(t) ? parseInt(t, 10) : null;
   if (t) {
-    document.getElementById("en").textContent = "TABLE " + (n !== null ? String(n).padStart(2, "0") : t);
     var tk = document.getElementById("tk");
     var em = document.createElement("em"); em.textContent = n !== null && KANJI[n] ? KANJI[n] : t;
     var sp = document.createElement("span"); sp.textContent = "番卓";
     tk.appendChild(em); tk.appendChild(sp);
   }
   var url = LOG + "?log=1&s=" + encodeURIComponent(s) + "&t=" + encodeURIComponent(t) + "&ua=" + encodeURIComponent(window.__env || "") + "&_=" + Date.now();
-  try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }).catch(function () { new Image().src = url; }); }
-  catch (e) { new Image().src = url; }
+  if (!preview) {
+    try { fetch(url, { mode: "no-cors", keepalive: true, cache: "no-store" }).catch(function () { new Image().src = url; }); }
+    catch (e) { new Image().src = url; }
+  }
 })();
 </script>
 </body>
