@@ -36,8 +36,17 @@ h1 span, .ro p span { white-space: nowrap; }
 .go:active { transform: translateY(1px); }
 .go:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
 .note { text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ash); letter-spacing: .04em; }
-#note { margin-top: -16px; }
-.note.hint { margin-top: -22px; font-size: 11.5px; line-height: 1.7; opacity: .85; }
+/* v10（用户 11/18：两个按钮并排让客人自己选）*/
+.pick { display: grid; gap: 14px; }
+.pick .ask { text-align: center; font-family: var(--f-mincho); font-size: 15px; letter-spacing: .1em; color: var(--washi); }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.opt { display: grid; gap: 9px; align-content: start; }
+.pick .go { display: grid; align-content: center; gap: 1px; min-height: 104px; padding: 12px 6px; font-size: 16px; letter-spacing: .03em; }
+.pick .go b { font-weight: 700; white-space: nowrap; }
+.pick .go small { font-size: 12.5px; font-weight: 500; color: #6b5a47; letter-spacing: .08em; margin-top: 3px; }
+.pick .sub { text-align: center; font-size: 11.5px; line-height: 1.7; color: var(--ash); }
+.pick .sub b { color: var(--washi); font-weight: 600; font-size: 11px; white-space: nowrap; }
+.note.hint { font-size: 11.5px; line-height: 1.7; opacity: .85; }
 .note b { color: var(--washi); font-weight: 600; }
 .note .nw { white-space: nowrap; }
 .note .mp { display: inline-block; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(239,230,211,.14); }
@@ -79,10 +88,20 @@ h1 span, .ro p span { white-space: nowrap; }
     <h1><span>本日はご来店</span><br><span>ありがとうございました</span></h1>
     <p><span>よろしければ、Google クチコミに</span><br><span>ご感想をお寄せください</span></p>
   </div></div>
-  <a class="go" id="go" href="#" rel="noopener">Google でクチコミを書く</a>
-  <p class="note" id="note">クチコミ投稿画面が開きます</p>
-  <p class="note hint" id="hint">「外部アプリケーションを開こうとしています」と出たら<br><b>「許可する」</b>をタップしてください<br>
-    <span class="mp">Google マップが開いた場合は<br><b class="nw">「クチコミ」→「クチコミを書く」</b>をタップ</span></p>
+  <section class="pick">
+    <p class="ask">お使いのアプリを選んでください</p>
+    <div class="pair">
+      <div class="opt">
+        <a class="go" id="go" href="#" rel="noopener"><b>Google アプリ</b><b>Chrome</b><small>で書く</small></a>
+        <p class="sub">クチコミ投稿画面が<br>そのまま開きます</p>
+      </div>
+      <div class="opt">
+        <a class="go" id="gmap" href="#" rel="noopener"><b>Google マップ</b><small>で書く</small></a>
+        <p class="sub">開いたら <b>「クチコミ」</b>→<br><b>「クチコミを書く」</b>をタップ</p>
+      </div>
+    </div>
+    <p class="note hint" id="hint">「外部アプリケーションを開こうとしています」と出たら <b class="nw">「許可する」</b> をタップ</p>
+  </section>
   <div class="foot"><small>GOOGLE REVIEW<br><span id="en"></span></small><div class="tk" id="tk"></div></div>
 </main>
 <script>
@@ -125,7 +144,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   /* v8（用户 11/18：按钮太多，合成一个；地图先不管）：一个按钮，依次自动试
      ① Chrome（googlechromes://）→ ② Google App（googleapp://open-url）→ ③ 本浏览器打开评价链接（没登录 Google 的会出登录页，绕不过）。
      每步等 3.5 秒（给客人在 LINE 的「外部アプリ」提示里点「許可する」的时间）；页面一离开（App 打开了）就停，回来也不再接着跳。 */
-  var go = document.getElementById("go"), note = document.getElementById("note"), hint = document.getElementById("hint");
+  var go = document.getElementById("go"), gmap = document.getElementById("gmap"), hint = document.getElementById("hint");
   var bare = st.review.replace(/^https:\/\//, "");
   go.href = st.review;
   /* v7：已经在 Chrome / Google App 里打开的（那两个 App 里已登录 Google），直接在原地打开评价链接 */
@@ -135,12 +154,19 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
   window.__env = env;
   var steps = [st.review];   // 已在 Chrome / Google App 里（已登录）、电脑：原地打开
   if (iOS && env !== "chrome" && env !== "googleapp") {
-    // v9（用户 11/18：没装 Chrome / Google App 的 iPhone 要自己输密码；日本人多用 Google マップ → 合进同一个按钮）
-    steps = ["googlechromes://" + bare, "googleapp://open-url?url=" + encodeURIComponent(st.review), st.app, st.review];
+    // v10（用户 11/18：连续弹窗客人会觉得奇怪 → 地图拆成右边单独的按钮，左边接力只试 Chrome → Google App）
+    steps = ["googlechromes://" + bare, "googleapp://open-url?url=" + encodeURIComponent(st.review), st.review];
   } else if (android) {   // Android：intent 指定 Chrome（Android 的 Chrome 一般已登录），没装就用浏览器
     steps = ["intent://" + bare + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(st.review) + ";end"];
   }
-  if (!(iOS && steps.length > 1)) hint.hidden = true;   // 只有要叫起别的 App 时才需要「許可する」提示
+  // 右边「Google マップ」：iPhone 叫起地图 App（只弹一次），没装就开网页版地图；Android 用 intent 指定地图 App
+  gmap.href = iOS ? st.app : android
+    ? "intent://" + st.map.replace(/^https:\/\//, "") + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(st.map) + ";end"
+    : st.map;
+  if (iOS) gmap.addEventListener("click", function () {
+    setTimeout(function () { if (!document.hidden && !left) location.href = st.map; }, 3500);
+  });
+  if (!iOS) hint.hidden = true;   // 「許可する」提示只在 iPhone 的 LINE 等里会出现
   go.href = steps[0];
   var left = false;
   var mark = function () { if (document.hidden) left = true; };
