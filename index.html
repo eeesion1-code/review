@@ -297,7 +297,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
 (function () {
   var q = new URLSearchParams(location.search), s = (q.get("s") || "").trim(), t = (q.get("t") || "").trim().slice(0, 20);
   /* 风格：THEME＝正式用的版本；网址加 &theme=1〜5 只是预览（预览不记扫码） */
-  var THEME = 1, qt = q.get("theme"), preview = /^([1-9]|1[0-5])$/.test(qt || "");
+  var THEME = 2, qt = q.get("theme"), preview = /^([1-9]|1[0-5])$/.test(qt || "");
   document.body.classList.add("t" + (preview ? qt : THEME));
   var st = STORES[s];
   if (!st) {
