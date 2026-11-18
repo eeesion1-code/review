@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Google クチコミ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&family=Yuji+Syuku&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&family=Yuji+Syuku&family=Zen+Antique&family=Dela+Gothic+One&family=Zen+Old+Mincho:wght@600&display=swap">
 <style>
 /* 版式：一屏竖排 —— 店名 / 炉縁框里的感谢语 / 写评价按钮 / 桌号。和桌上的 QR 卡同一套「いろり」配色（只做一种深色样式） */
 :root {
@@ -144,6 +144,65 @@ body.t5::before { content: "囲"; position: fixed; right: -40px; bottom: 30px; f
 .t5 .foot { border-top-color: rgba(29,29,27,.15); justify-content: flex-end; }
 .t5 .foot .tk em { color: #1d1d1b; font-weight: 500; } .t5 .foot .tk span { color: #8a8780; }
 
+/* ===== 第二批 5 种（frontend-design 思路）：body.t6〜t10 ===== */
+html:has(body.t6) { background: #efe4cc; } html:has(body.t7) { background: #160605; } html:has(body.t8) { background: #f4e2b8; }
+html:has(body.t9) { background: #0f0f0f; } html:has(body.t10) { background: #f3efe8; }
+/* 6 浮世絵 */
+body.t6 { color-scheme: light; background: #efe4cc; color: #1e2f55; padding-top: calc(max(28px, env(safe-area-inset-top)) + 26px); padding-bottom: 60px; }
+body.t6::before, body.t6::after { content: ""; position: fixed; left: 0; right: 0; height: 26px; pointer-events: none;
+  background: radial-gradient(circle at 50% 100%, transparent 5px, #1e2f55 5px 6.5px, transparent 6.5px 9px, #1e2f55 9px 10.5px, transparent 10.5px 12.5px, #1e2f55 12.5px) 0 0 / 26px 13px repeat; }
+body.t6::before { top: 0; } body.t6::after { bottom: 0; }
+.t6 .head b { color: #1e2f55; font-family: "Zen Antique", serif; letter-spacing: .2em; } .t6 .head i { background: #c0392b; }
+.t6 .head span { background: linear-gradient(90deg, rgba(30,47,85,.5), transparent); }
+.t6 .ro { background: #1e2f55; padding: 4px; box-shadow: none; } .t6 .ro div { background: #fbf6ea; }
+.t6 h1 { font-family: "Zen Antique", serif; font-weight: 400; color: #1e2f55; } .t6 .ro p, .t6 .pick .ask { color: #1e2f55; }
+.t6 .go { background: #1e2f55; color: #fbf6ea; box-shadow: none; border-radius: 2px; } .t6 .pick .go small { color: #c9b48f; }
+.t6 .pick .sub { color: #8a6d4b; } .t6 .pick .sub b { color: #1e2f55; }
+.t6 .foot { border-top-color: rgba(30,47,85,.3); } .t6 .foot .tk em { color: #c0392b; font-family: "Zen Antique", serif; font-weight: 400; } .t6 .foot .tk span { color: #1e2f55; }
+/* 7 提灯 */
+body.t7 { color: #f6e7c8; background: radial-gradient(ellipse 90% 45% at 50% 28%, #74200f 0%, #2a0b08 60%, #160605 100%); }
+body.t7::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 14px, rgba(0,0,0,.18) 14px 15px); }
+.t7 .head i { background: #f2b25c; } .t7 .head b { color: #f6e7c8; font-family: var(--f-mincho); } .t7 .head span { background: linear-gradient(90deg, #f2b25c, transparent); }
+.t7 .ro { background: #f2b25c; padding: 2px; border-radius: 16px; box-shadow: 0 0 46px rgba(255,150,70,.4); } .t7 .ro div { background: rgba(42,11,8,.94); border-radius: 14px; }
+.t7 h1, .t7 .ro p, .t7 .pick .ask { color: #f6e7c8; }
+.t7 .go { background: #f6e7c8; color: #2a0b08; border-radius: 16px; box-shadow: 0 0 26px rgba(255,150,70,.35); } .t7 .pick .go small { color: #8a4a2a; }
+.t7 .pick .sub { color: #e0b98a; } .t7 .pick .sub b { color: #f6e7c8; }
+.t7 .foot { border-top-color: rgba(246,231,200,.2); } .t7 .foot .tk em { color: #f2b25c; } .t7 .foot .tk span { color: #e0b98a; }
+/* 8 昭和レトロ */
+body.t8 { color-scheme: light; background: #f4e2b8; color: #2b1d14; }
+.t8 main { border: 5px solid #c8321e; border-radius: 16px; padding: 16px 14px 18px; gap: 24px; }
+.t8 .head { background: #c8321e; border-radius: 9px; padding: 11px; justify-content: center; } .t8 .head i, .t8 .head span { display: none; }
+.t8 .head b { font-family: "Dela Gothic One", sans-serif; color: #f4e2b8; font-size: 16px; letter-spacing: .06em; }
+.t8 .ro { background: #2b1d14; padding: 4px; border-radius: 12px; box-shadow: none; } .t8 .ro div { background: #fffaf0; border-radius: 9px; }
+.t8 h1 { font-family: "Dela Gothic One", sans-serif; font-weight: 400; color: #2b1d14; } .t8 .ro p { color: #2b1d14; }
+.t8 .pick .ask { font-family: "Dela Gothic One", sans-serif; color: #c8321e; letter-spacing: .04em; }
+.t8 .go { background: #c8321e; color: #fff7e6; border-radius: 14px; box-shadow: 0 5px 0 #2b1d14; } .t8 .pick .go b { font-family: "Dela Gothic One", sans-serif; font-weight: 400; }
+.t8 .pick .go small { color: #f4d9a8; } .t8 .pick .sub { color: #6b4a2b; } .t8 .pick .sub b { color: #2b1d14; }
+.t8 .foot { border-top: 2px dashed rgba(43,29,20,.45); }
+.t8 .foot .tk { align-items: center; } .t8 .foot .tk em { font-family: "Dela Gothic One", sans-serif; color: #f4e2b8; background: #2b1d14; padding: 2px 16px; border-radius: 99px; font-size: 26px; }
+.t8 .foot .tk span { color: #2b1d14; font-weight: 700; }
+/* 9 市松・金 */
+body.t9 { color: #e9d9a6; background: conic-gradient(#191919 25%, #0f0f0f 0 50%, #191919 0 75%, #0f0f0f 0) 0 0 / 26px 26px; }
+.t9 main { background: #0f0f0f; padding: 22px 18px; box-shadow: 0 0 0 1px #c9a75a, 0 0 0 5px #0f0f0f, 0 0 0 6px #c9a75a; }
+.t9 .head i { background: #c9a75a; transform: rotate(45deg); border-radius: 0; } .t9 .head b { color: #e9d9a6; font-family: "Zen Old Mincho", serif; } .t9 .head span { background: linear-gradient(90deg, #c9a75a, transparent); }
+.t9 .ro { background: linear-gradient(135deg, #f1e1b0, #a8823e 40%, #f1e1b0 60%, #9c7634); padding: 2px; box-shadow: none; } .t9 .ro div { background: #121212; }
+.t9 h1 { font-family: "Zen Old Mincho", serif; background: linear-gradient(90deg, #f1e1b0, #c9a75a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.t9 .ro p, .t9 .pick .ask { color: #e9d9a6; }
+.t9 .go { background: #121212; color: #e9d39a; box-shadow: inset 0 0 0 1px #c9a75a; } .t9 .pick .go small { color: #a89a72; }
+.t9 .pick .sub { color: #a89a72; } .t9 .pick .sub b { color: #e9d9a6; }
+.t9 .foot { border-top-color: rgba(201,167,90,.35); } .t9 .foot .tk em { color: #e9d39a; font-family: "Zen Old Mincho", serif; } .t9 .foot .tk span { color: #a89a72; }
+/* 10 炭火エディトリアル */
+body.t10 { color-scheme: light; background: #f3efe8; color: #151311; padding-left: max(30px, env(safe-area-inset-left)); }
+body.t10::before { content: ""; position: fixed; left: 0; top: 0; bottom: 0; width: 9px; background: #e04a2a; }
+.t10 .head i { background: #e04a2a; border-radius: 0; } .t10 .head b { font-family: "Dela Gothic One", sans-serif; color: #151311; letter-spacing: .06em; }
+.t10 .head span { background: #151311; height: 3px; }
+.t10 .ro { background: none; box-shadow: none; padding: 0; } .t10 .ro div { background: none; text-align: left; padding: 6px 0; }
+.t10 h1 { font-family: "Dela Gothic One", sans-serif; font-weight: 400; font-size: clamp(20px, 7vw, 28px); line-height: 1.4; color: #151311; }
+.t10 .ro p { color: #151311; } .t10 .pick .ask { color: #151311; font-family: "Dela Gothic One", sans-serif; text-align: left; letter-spacing: .04em; }
+.t10 .go { background: #151311; color: #f3efe8; border-radius: 0; box-shadow: 5px 5px 0 #e04a2a; } .t10 .pick .go small { color: #f08a6e; }
+.t10 .pick .sub { color: #6d6760; } .t10 .pick .sub b { color: #151311; }
+.t10 .foot { border-top: 6px solid #151311; justify-content: flex-start; } .t10 .foot .tk em { font-family: "Dela Gothic One", sans-serif; color: #e04a2a; font-size: 34px; } .t10 .foot .tk span { color: #151311; font-weight: 700; }
+
 .bad { text-align: center; font-family: var(--f-mincho); font-size: 17px; line-height: 1.9; padding-top: 30vh; }
 </style>
 </head>
@@ -183,7 +242,7 @@ var KANJI = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", 
 (function () {
   var q = new URLSearchParams(location.search), s = (q.get("s") || "").trim(), t = (q.get("t") || "").trim().slice(0, 20);
   /* 风格：THEME＝正式用的版本；网址加 &theme=1〜5 只是预览（预览不记扫码） */
-  var THEME = 1, qt = q.get("theme"), preview = /^[1-5]$/.test(qt || "");
+  var THEME = 1, qt = q.get("theme"), preview = /^([1-9]|10)$/.test(qt || "");
   document.body.classList.add("t" + (preview ? qt : THEME));
   var st = STORES[s];
   if (!st) {
